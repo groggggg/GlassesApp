@@ -2,7 +2,7 @@ import asyncio
 import websockets
 
 async def main():
-    uri = "ws://localhost:8765"
+    uri = "ws://api.grogg.dev"
     async with websockets.connect(uri) as websocket:
         print("Connected to Node WebSocket")
 
