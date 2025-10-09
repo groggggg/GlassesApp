@@ -1,9 +1,27 @@
 import { AppServer, AppSession, ViewType } from '@mentra/sdk';
-
+import { WebSocket, WebSocketServer} from "ws";
 
 const PACKAGE_NAME = process.env.PACKAGE_NAME ?? (() => { throw new Error('PACKAGE_NAME is not set in .env file'); })();
 const MENTRAOS_API_KEY = process.env.MENTRAOS_API_KEY ?? (() => { throw new Error('MENTRAOS_API_KEY is not set in .env file'); })();
 const PORT = parseInt(process.env.PORT || '3000');
+
+const wsServer = new WebSocketServer({ port: 8765 });
+
+wsServer.on("connection", (socket) => {
+  console.log("Python connected to WebSocket");
+
+  socket.on("message", async (msg) => {
+    const data = msg.toString();
+    console.log("📩 Message from Python:", data);
+
+    // If you have an active Mentra session, show the result
+    if (activeSession) {
+      await activeSession.layouts.showTextWall(data);
+    }
+  });
+});
+
+let activeSession: AppSession | null = null;
 
 class ExampleMentraOSApp extends AppServer {
 
@@ -23,15 +41,18 @@ class ExampleMentraOSApp extends AppServer {
     // requires microphone permission to be set in the developer console
     session.events.onTranscription((data) => {
       if (data.isFinal) {
+        console.log(data.text)
         session.layouts.showTextWall("You said: " + data.text, {
           view: ViewType.MAIN,
           durationMs: 3000
         });
-      }
-    })
 
-    session.events.onGlassesBattery((data) => {
-      console.log('Glasses battery:', data);
+        wsServer.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(data.text);
+          }
+        });
+      }
     })
   }
 }
