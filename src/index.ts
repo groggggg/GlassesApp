@@ -37,9 +37,9 @@ class ExampleMentraOSApp extends AppServer {
           });
 
         } catch (err) {
-          console.error(err);
+          console.error();
           // fallback: show original text if remote fails
-          session.layouts.showTextWall("You said: " + data.text, {
+          session.layouts.showTextWall("Error occured. Message: " + data.text, {
             view: ViewType.MAIN,
             durationMs: 3000
           });
