@@ -17,11 +17,12 @@ class TextIn(BaseModel):
 # --- Module-level state persists between POST calls ---
 is_recording = False
 recorded_text = ""
+final_text = ""
 
 @app.post("/process")
 async def process_text(data: TextIn):
-    start_word = "start"
-    end_word = "end"
+    start_word = "start recording"
+    end_word = "stop recording"
 
     global is_recording, recorded_text
     text = data.text.lower().strip()
@@ -47,4 +48,4 @@ async def process_text(data: TextIn):
         return {"status": "recording"}
 
     # Outside recording
-    return {"status": "ignored"}
+    return {"summary": recorded_text}
