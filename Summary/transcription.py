@@ -27,6 +27,7 @@ async def process_text(data: TextIn):
 
     global is_recording, recorded_text
     text = data.text.lower().strip()
+    print(text)
 
     # Start recording
     if start_word in text and not is_recording:

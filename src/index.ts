@@ -31,12 +31,11 @@ class ExampleMentraOSApp extends AppServer {
           const edited = resp.data?.return ?? "error";
 
           // display edited text
-          if (edited != "") {
-            session.layouts.showTextWall(edited, {
-              view: ViewType.MAIN,
-              durationMs: 3000
-            });
-          }
+          session.layouts.showTextWall(edited, {
+            view: ViewType.MAIN,
+            durationMs: 3000
+          });
+
 
         } catch (err) {
           console.error();
