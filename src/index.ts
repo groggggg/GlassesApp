@@ -30,17 +30,17 @@ class ExampleMentraOSApp extends AppServer {
           const resp = await axios.post(PYTHON_API_URL, { text: data.text }, { timeout: 5000 });
           const edited = resp.data?.return ?? "error";
 
+          
           // display edited text
           session.layouts.showTextWall(edited, {
             view: ViewType.MAIN,
-            durationMs: 3000
+            durationMs: 10000
           });
-
 
         } catch (err) {
           console.error();
           // fallback: show original text if remote fails
-          session.layouts.showTextWall("Error occured. Message: " + data.text, {
+          session.layouts.showTextWall("Error occured.", {
             view: ViewType.MAIN,
             durationMs: 3000
           });

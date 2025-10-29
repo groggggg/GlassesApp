@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from summary import Summarize
 
 app = FastAPI()
 
@@ -14,10 +15,9 @@ app.add_middleware(
 class TextIn(BaseModel):
     text: str
 
-# --- Module-level state persists between POST calls ---
 is_recording = False
 recorded_text = ""
-final_text = ""
+edited = ""
 
 @app.post("/process")
 async def process_text(data: TextIn):
@@ -32,24 +32,26 @@ async def process_text(data: TextIn):
     # Start recording
     if start_word in text and not is_recording:
         is_recording = True
-        recorded_text = ""
-        return {"return": "recording started"}
+        recorded_text = text.split(start_word, 1)[1]
+        recording_text = "Recording started"
+        return {"return": recording_text}
 
     # Stop recording
     if end_word in text and is_recording:
         is_recording = False
         final_text = recorded_text.strip()
         recorded_text = ""
-        # Here you can run your LLM or editing logic
-        edited = final_text.upper()  # simple example
+
+        edited = Summarize(final_text)  
         return {"return": edited}
 
     # During recording
     if is_recording:
         recorded_text += " " + text
-        return {"return": "recording"}
+        recording_text += "."
+        return {"return": recording_text}
 
     if show_word in text and not is_recording:
-        return {"return": recorded_text}
+        return {"return": edited}
     
     return {"return": ""}
