@@ -18,6 +18,7 @@ class TextIn(BaseModel):
 is_recording = False
 recorded_text = ""
 edited = ""
+recording_text = "Recording started"
 
 @app.post("/process")
 async def process_text(data: TextIn):
@@ -25,9 +26,9 @@ async def process_text(data: TextIn):
     end_word = "stop recording"
     show_word = "show summary"
 
-    global is_recording, recorded_text
+    global is_recording, recorded_text, recording_text, edited
     text = data.text.lower().strip()
-    print(text)
+    print(recorded_text)
 
     # Start recording
     if start_word in text and not is_recording:
@@ -43,6 +44,7 @@ async def process_text(data: TextIn):
         recorded_text = ""
 
         edited = Summarize(final_text)  
+        print(edited)
         return {"return": edited}
 
     # During recording
