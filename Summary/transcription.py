@@ -1,13 +1,12 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Allow requests from your Node/MentraOS app
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # restrict in production
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -21,32 +20,31 @@ recorded_text = ""
 
 @app.post("/process")
 async def process_text(data: TextIn):
-    """
-    Only responds when "stop" is said.  
-    Accumulates text between "start" and "stop".
-    """
+    start_word = "start"
+    end_word = "end"
+
     global is_recording, recorded_text
-    text = (data.text or "").lower().strip()
+    text = data.text.lower().strip()
 
     # Start recording
-    if "start" in text and not is_recording:
+    if start_word in text and not is_recording:
         is_recording = True
         recorded_text = ""
-        return Response(status_code=204)  # do not send anything to Node
+        return {"status": "recording started"}
 
     # Stop recording
-    if "stop" in text and is_recording:
+    if end_word in text and is_recording:
         is_recording = False
         final_text = recorded_text.strip()
         recorded_text = ""
-        # Here you can run your editing logic or LLM
+        # Here you can run your LLM or editing logic
         edited = final_text.upper()  # simple example
         return {"edited_text": edited}
 
-    # During recording → append text silently
+    # During recording
     if is_recording:
-        recorded_text += (" " if recorded_text else "") + text
-        return Response(status_code=204)  # do not send anything yet
+        recorded_text += " " + text
+        return {"status": "recording"}
 
-    # Outside recording → do nothing
-    return Response(status_code=204)
+    # Outside recording
+    return {"status": "ignored"}
