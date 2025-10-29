@@ -28,13 +28,15 @@ class ExampleMentraOSApp extends AppServer {
         try {
           // send to Python editor
           const resp = await axios.post(PYTHON_API_URL, { text: data.text }, { timeout: 5000 });
-          const edited = resp.data?.edited_text ?? "error";
+          const edited = resp.data?.return ?? "error";
 
           // display edited text
-          session.layouts.showTextWall("Edited: " + edited, {
-            view: ViewType.MAIN,
-            durationMs: 3000
-          });
+          if (edited != "") {
+            session.layouts.showTextWall(edited, {
+              view: ViewType.MAIN,
+              durationMs: 3000
+            });
+          }
 
         } catch (err) {
           console.error();

@@ -23,6 +23,7 @@ final_text = ""
 async def process_text(data: TextIn):
     start_word = "start recording"
     end_word = "stop recording"
+    show_word = "show summary"
 
     global is_recording, recorded_text
     text = data.text.lower().strip()
@@ -31,7 +32,7 @@ async def process_text(data: TextIn):
     if start_word in text and not is_recording:
         is_recording = True
         recorded_text = ""
-        return {"status": "recording started"}
+        return {"return": "recording started"}
 
     # Stop recording
     if end_word in text and is_recording:
@@ -40,12 +41,14 @@ async def process_text(data: TextIn):
         recorded_text = ""
         # Here you can run your LLM or editing logic
         edited = final_text.upper()  # simple example
-        return {"edited_text": edited}
+        return {"return": edited}
 
     # During recording
     if is_recording:
         recorded_text += " " + text
-        return {"status": "recording"}
+        return {"return": "recording"}
 
-    # Outside recording
-    return {"summary": recorded_text}
+    if show_word in text and not is_recording:
+        return {"return": recorded_text}
+    
+    return {"return": ""}
