@@ -45,7 +45,7 @@ async def process_text(data: TextIn):
 
         edited = Summarize(final_text)  
         print(edited)
-        return {"return": edited}
+        return {"return": final_text}
 
     # During recording
     if is_recording:

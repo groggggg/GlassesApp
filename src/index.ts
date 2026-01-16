@@ -30,7 +30,7 @@ class ExampleMentraOSApp extends AppServer {
       if (data.isFinal) {
         try {
           // send to Python editor
-          const resp = await axios.post(PYTHON_API_URL, { text: data.text }, { timeout: 5000 });
+          const resp = await axios.post(PYTHON_API_URL, { text: data.text }, { timeout: 360000 });
           const edited = resp.data?.return ?? "error";
 
           
