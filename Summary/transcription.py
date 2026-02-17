@@ -18,7 +18,7 @@ class TextIn(BaseModel):
 is_recording = False
 recorded_text = ""
 edited = ""
-recording_text = "Recording started"
+recording_text = "Recording"
 
 @app.post("/process")
 async def process_text(data: TextIn):
@@ -34,13 +34,16 @@ async def process_text(data: TextIn):
     if start_word in text and not is_recording:
         is_recording = True
         recorded_text = text.split(start_word, 1)[1]
+        while recorded_text[0].isalnum == False:
+            recorded_text = recorded_text[1:]
+        
         recording_text = "Recording started"
         return {"return": recording_text}
 
     # Stop recording
     if end_word in text and is_recording:
         is_recording = False
-        final_text = recorded_text.strip()
+        final_text = text.split(end_word, 1)[0].strip()
         recorded_text = ""
 
         edited = Summarize(final_text)  
@@ -51,6 +54,8 @@ async def process_text(data: TextIn):
     if is_recording:
         recorded_text += " " + text
         recording_text += "."
+        if recorded_text[-4] == ".":
+            recorded_text = "Recording"
         return {"return": recording_text}
 
     if show_word in text and not is_recording:
