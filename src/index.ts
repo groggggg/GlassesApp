@@ -20,7 +20,7 @@ class ExampleMentraOSApp extends AppServer {
 
   protected async onSession(session: AppSession, sessionId: string, userId: string): Promise<void> {
     // Show welcome message
-    session.layouts.showTextWall("Loaded!",{
+    session.layouts.showTextWall("App has started/restarted",{
             view: ViewType.MAIN,
             durationMs: 3000
           });

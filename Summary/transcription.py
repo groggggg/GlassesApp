@@ -34,11 +34,10 @@ async def process_text(data: TextIn):
     if start_word in text and not is_recording:
         is_recording = True
         recorded_text = text.split(start_word, 1)[1]
-        while recorded_text[0].isalnum == False:
-            recorded_text = recorded_text[1:]
+        print(recorded_text[0].isalnum)
+        recorded_text == recorded_text[1:]
         
-        recording_text = "Recording started"
-        return {"return": recording_text}
+        return {"return": "Recording started"}
 
     # Stop recording
     if end_word in text and is_recording:
@@ -57,6 +56,9 @@ async def process_text(data: TextIn):
         if recorded_text[-4] == ".":
             recorded_text = "Recording"
         return {"return": recording_text}
+    
+    if "identity" in text:
+        return "Ms. Claire, female patient, transferred from Ward 5B to ICU. Handover given by Catherine to Mike. Charge nurse already present and monitoring initiated."
 
     if show_word in text and not is_recording:
         return {"return": edited}
